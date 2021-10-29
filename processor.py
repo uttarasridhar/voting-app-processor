@@ -12,7 +12,7 @@ def get_queue_details():
 
 def ship_votes(batch_votes):
     endpoint = str(getenv('COPILOT_SERVICE_DISCOVERY_ENDPOINT'))
-    url = 'http://' + endpoint + '/votes/batch'
+    url = 'http://api.' + endpoint + ':8080/votes/batch'
     votes = {
         "votes": batch_votes
     }
@@ -28,7 +28,8 @@ def receive():
         # do we enable long polling? https://boto3.amazonaws.com/v1/documentation/api/latest/guide/sqs-example-long-polling.html#id5
         for message in queue.receive_messages():
             print("MESSAGE CONSUMED: {}".format(message.body))
-            msg = json.loads(message.body)
+            msgbody = json.loads(message.body)
+            msg = json.loads(msgbody["Message"])
             # Store message in list as dict
             _batch_data.append({
                 'voter_id': msg["voter_id"],
